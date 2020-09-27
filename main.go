@@ -73,6 +73,13 @@ func main() {
 		if price > *maxPrice {
 			continue
 		}
+		var nextReduce string
+		if s["fixed_price"].(bool) {
+			nextReduce = "fixed price"
+		} else {
+			nextReduce = s["next_reduce_hr"].(string)
+		}
+
 		cpuCount := uint(s["cpu_count"].(float64))
 		if cpuCount < *minCPUCount {
 			continue
@@ -99,7 +106,7 @@ func main() {
 		if *highio && !s["is_highio"].(bool) {
 			continue
 		}
-		fmt.Printf("EUR %.2f / month\n\t%s\n", price, s["freetext"].(string))
+		fmt.Printf("EUR %.2f / month (%s)\n\t%s\n", price, nextReduce, s["freetext"].(string))
 		fmt.Printf("\tCPU: %dx %s (benchmark: %d)\n", cpuCount, s["cpu"].(string), cpuBenchmark)
 		fmt.Printf("\tRAM: %s (ECC: %t)\n", s["ram_hr"].(string), s["is_ecc"].(bool))
 		fmt.Printf("\tDisks: %s (SSD/High IO: %t)\n", s["hdd_hr"].(string), s["is_highio"].(bool))
