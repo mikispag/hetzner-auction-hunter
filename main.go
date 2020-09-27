@@ -75,9 +75,11 @@ func main() {
 		}
 		var nextReduce string
 		if s["fixed_price"].(bool) {
-			nextReduce = "fixed price"
+			nextReduce = "fixed"
 		} else {
-			nextReduce = s["next_reduce_hr"].(string)
+			nextReduceSeconds := time.Duration(s["next_reduce"].(float64)) * time.Second
+			reductionTime := time.Now().Add(nextReduceSeconds)
+			nextReduce = "next reduction on " + reductionTime.Format(time.RFC1123)
 		}
 
 		cpuCount := uint(s["cpu_count"].(float64))
