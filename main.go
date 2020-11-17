@@ -1,15 +1,14 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"math"
 	"net/http"
 	"strconv"
 	"time"
 
+	"github.com/mikispag/web"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -20,26 +19,6 @@ const (
 var (
 	c = &http.Client{Timeout: 10 * time.Second}
 )
-
-func getJSON(url string, target interface{}) error {
-	r, err := c.Get(url)
-	if err != nil {
-		return err
-	}
-	defer r.Body.Close()
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		return err
-	}
-	if r.StatusCode < 200 || r.StatusCode > 299 {
-		return fmt.Errorf("HTTP request failed with response code %d and body: %s", r.StatusCode, body)
-	}
-	err = json.Unmarshal(body, &target)
-	if err != nil {
-		return err
-	}
-	return nil
-}
 
 func main() {
 	maxPrice := flag.Float64("maxPrice", math.MaxInt64, "the maximum price per month to pay, in EUR")
@@ -59,7 +38,7 @@ func main() {
 	})
 
 	var result map[string]interface{}
-	err := getJSON(hetznerAPIURL, &result)
+	err := web.GetJSON(hetznerAPIURL, &result)
 	if err != nil {
 		log.WithError(err).Fatal("Unable to fetch servers from Hetzner!")
 	}
