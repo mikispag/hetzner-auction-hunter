@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"math"
-	"net/http"
 	"strconv"
 	"time"
 
@@ -17,7 +16,7 @@ const (
 )
 
 var (
-	c = &http.Client{Timeout: 10 * time.Second}
+	webClient = web.New()
 )
 
 func main() {
@@ -38,7 +37,7 @@ func main() {
 	})
 
 	var result map[string]interface{}
-	err := web.GetJSON(hetznerAPIURL, &result)
+	err := webClient.GetJSON(hetznerAPIURL, &result)
 	if err != nil {
 		log.WithError(err).Fatal("Unable to fetch servers from Hetzner!")
 	}
